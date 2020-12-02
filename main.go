@@ -77,8 +77,14 @@ func main() {
 				{Role: astilectron.MenuItemRoleClose},
 			},
 		}},
-		OnWait: func(_ *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
+		OnWait: func(a *astilectron.Astilectron, ws []*astilectron.Window, _ *astilectron.Menu, _ *astilectron.Tray, _ *astilectron.Menu) error {
 			w = ws[0]
+
+			a.On(astilectron.EventNameAppEventSecondInstance, func(e astilectron.Event) bool {
+				l.Printf("Second app instance opened, with working directory: %v and command line %v", e.SecondInstance.WorkingDirectory, e.SecondInstance.CommandLine)
+				return false
+			})
+
 			go func() {
 				time.Sleep(5 * time.Second)
 				if err := bootstrap.SendMessage(w, "check.out.menu", "Don't forget to check out the menu!"); err != nil {
